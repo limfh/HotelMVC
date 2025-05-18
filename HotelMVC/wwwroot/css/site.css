@@ -1,0 +1,74 @@
+/* Основные стили */
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Карточки */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Кнопки */
+.btn {
+    margin: 2px;
+}
+
+/* Таблицы */
+.table th {
+    background-color: #343a40;
+    color: white;
+}
+
+/* Формы */
+.form-control, .form-select {
+    margin-bottom: 10px;
+}
+
+/* Изображения */
+.img-thumbnail {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Футер */
+.footer {
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .navbar-nav {
+        flex-direction: column;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+}

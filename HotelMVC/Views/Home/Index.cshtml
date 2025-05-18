@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "Главная страница";
+}
+
+<div class="jumbotron jumbotron-fluid bg-primary text-white">
+    <div class="container text-center py-5">
+        <h1 class="display-4">Добро пожаловать в систему управления гостиницей</h1>
+        <p class="lead">Удобное управление номерами, гостями и бронированиями</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-hotel fa-4x mb-3 text-primary"></i>
+                    <h3>Номера</h3>
+                    <p>Управление номерами гостиницы: добавление, редактирование, удаление.</p>
+                    <a asp-controller="Rooms" asp-action="Index" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-4x mb-3 text-success"></i>
+                    <h3>Гости</h3>
+                    <p>Регистрация гостей, ведение учета и истории пребывания.</p>
+                    <a asp-controller="Guests" asp-action="Index" class="btn btn-success">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-check fa-4x mb-3 text-info"></i>
+                    <h3>Бронирования</h3>
+                    <p>Оформление бронирований, управление заездами и выездами.</p>
+                    <a asp-controller="Reservations" asp-action="Index" class="btn btn-info">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h3 class="mb-0">Статистика</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-value">@ViewBag.TotalRooms</div>
+                                <div class="stat-label">Всего номеров</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-value text-success">@ViewBag.AvailableRooms</div>
+                                <div class="stat-label">Свободно номеров</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="stat-card">
+                                <div class="stat-value text-info">@ViewBag.TotalGuests</div>
+                                <div class="stat-label">Зарегистрировано гостей</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="stat-card">
+                                <div class="stat-value text-danger">@ViewBag.ActiveReservations</div>
+                                <div class="stat-label">Активных бронирований</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">Быстрые действия</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Rooms" asp-action="Create" class="btn btn-primary mb-2">
+                            <i class="fas fa-plus-circle"></i> Добавить номер
+                        </a>
+                        <a asp-controller="Guests" asp-action="Create" class="btn btn-success mb-2">
+                            <i class="fas fa-user-plus"></i> Зарегистрировать гостя
+                        </a>
+                        <a asp-controller="Reservations" asp-action="Create" class="btn btn-info">
+                            <i class="fas fa-calendar-plus"></i> Оформить бронирование
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .jumbotron {
+        margin-bottom: 2rem;
+        border-radius: 0;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .card {
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
