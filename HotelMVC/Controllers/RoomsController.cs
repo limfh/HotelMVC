@@ -1,4 +1,5 @@
 ﻿using HotelMVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,24 +15,21 @@ namespace HotelMVC.Controllers
             _context = context;
         }
 
-        // GET: Rooms
+        // GET: Rooms (доступно всем)
         public async Task<IActionResult> Index(string roomType, string searchString, int? capacity)
         {
             var rooms = from r in _context.Rooms select r;
 
-            // Фильтрация по типу
             if (!string.IsNullOrEmpty(roomType))
             {
                 rooms = rooms.Where(r => r.Type == roomType);
             }
 
-            // Поиск по номеру
             if (!string.IsNullOrEmpty(searchString))
             {
                 rooms = rooms.Where(r => r.Number.Contains(searchString));
             }
 
-            // Фильтрация по вместимости
             if (capacity.HasValue)
             {
                 rooms = rooms.Where(r => r.Capacity >= capacity.Value);
@@ -46,11 +44,12 @@ namespace HotelMVC.Controllers
             };
 
             ViewBag.RoomTypes = new SelectList(roomTypeList.Distinct());
+            ViewBag.IsAdmin = User.IsInRole("Admin");
 
             return View(await rooms.ToListAsync());
         }
 
-        // GET: Rooms/Details/5
+        // GET: Rooms/Details/5 (доступно всем)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -68,16 +67,18 @@ namespace HotelMVC.Controllers
             return View(room);
         }
 
-        // GET: Rooms/Create
+        // GET: Rooms/Create (только для админа)
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Rooms/Create
+        // POST: Rooms/Create (только для админа)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,Type,Capacity,PricePerNight,Description,IsAvailable")] Room room)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("Number,Type,Capacity,PricePerNight,Description,IsAvailable")] Room room)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +89,8 @@ namespace HotelMVC.Controllers
             return View(room);
         }
 
-        // GET: Rooms/Edit/5
+        // GET: Rooms/Edit/5 (только для админа)
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -104,9 +106,10 @@ namespace HotelMVC.Controllers
             return View(room);
         }
 
-        // POST: Rooms/Edit/5
+        // POST: Rooms/Edit/5 (только для админа)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Type,Capacity,PricePerNight,Description,IsAvailable")] Room room)
         {
             if (id != room.Id)
@@ -137,7 +140,8 @@ namespace HotelMVC.Controllers
             return View(room);
         }
 
-        // GET: Rooms/Delete/5
+        // GET: Rooms/Delete/5 (только для админа)
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -155,9 +159,10 @@ namespace HotelMVC.Controllers
             return View(room);
         }
 
-        // POST: Rooms/Delete/5
+        // POST: Rooms/Delete/5 (только для админа)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var room = await _context.Rooms.FindAsync(id);
@@ -173,6 +178,24 @@ namespace HotelMVC.Controllers
         private bool RoomExists(int id)
         {
             return _context.Rooms.Any(e => e.Id == id);
+        }
+
+        // GET: Rooms/Book/5 (только для авторизованных пользователей)
+        [Authorize]
+        public async Task<IActionResult> Book(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null || !room.IsAvailable)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Create", "Reservations", new { roomId = id });
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
@@ -17,12 +18,21 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Rooms" asp-action="Index">Номера</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Guests" asp-action="Index">Гости</a>
-                        </li>
+                        @if (User.IsInRole("Admin")) // Показываем ссылку на гостей только администраторам
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Guests" asp-action="Index">Гости</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Reservations" asp-action="Index">Бронирования</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin")) // Ссылка на профиль гостя для обычных пользователей
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Guests" asp-action="Create">Профиль гостя</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="About">О нас</a>
                         </li>
@@ -30,16 +40,42 @@
                             <a class="nav-link" asp-controller="Home" asp-action="Contact">Контакты</a>
                         </li>
                     </ul>
+                   
+                 
+
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <span class="navbar-text text-light me-2">Здравствуйте, @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-light">Выйти</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light me-2" asp-controller="Account" asp-action="Login">Войти</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Регистрация</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notifications" />
             @RenderBody()
         </main>
     </div>
-
+        
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; @DateTime.Now.Year - Гостиница
@@ -47,6 +83,43 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $.validator.setDefaults({
+            errorClass: 'text-danger',
+            errorElement: 'span',
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid').removeClass('is-valid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-valid').removeClass('is-invalid');
+            }
+        });
+
+        // Локализация сообщений валидации
+        $.extend($.validator.messages, {
+            required: "Это поле необходимо заполнить",
+            remote: "Пожалуйста, введите правильное значение",
+            email: "Введите корректный email",
+            url: "Введите корректный URL",
+            date: "Введите корректную дату",
+            dateISO: "Введите корректную дату в формате ISO",
+            number: "Введите число",
+            digits: "Введите только цифры",
+            creditcard: "Введите правильный номер карты",
+            equalTo: "Значения не совпадают",
+            maxlength: $.validator.format("Максимальная длина - {0} символов"),
+            minlength: $.validator.format("Минимальная длина - {0} символов"),
+            rangelength: $.validator.format("Длина должна быть от {0} до {1} символов"),
+            range: $.validator.format("Введите число от {0} до {1}"),
+            max: $.validator.format("Максимальное значение - {0}"),
+            min: $.validator.format("Минимальное значение - {0}")
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

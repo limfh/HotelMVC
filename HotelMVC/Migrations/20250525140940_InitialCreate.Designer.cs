@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelMVC.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250518231924_InitialCreate")]
+    [Migration("20250525140940_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -130,10 +130,35 @@ namespace HotelMVC.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("HotelMVC.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("HotelMVC.Models.Reservation", b =>
                 {
                     b.HasOne("HotelMVC.Models.Guest", "Guest")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("GuestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -147,6 +172,11 @@ namespace HotelMVC.Migrations
                     b.Navigation("Guest");
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("HotelMVC.Models.Guest", b =>
+                {
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

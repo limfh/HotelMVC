@@ -1,0 +1,30 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="text-center mt-5">
+    <h1 class="text-danger">@Model.StatusCode</h1>
+    <h2 class="text-danger">@Model.Title</h2>
+    <p class="lead">@Model.Message</p>
+    <hr />
+    <p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Вернуться на главную</a>
+        @if (Model.StatusCode == 401 || Model.StatusCode == 403)
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-success">Войти</a>
+        }
+    </p>
+</div>
+
+<style>
+    h1 {
+        font-size: 6rem;
+        margin-bottom: 2rem;
+    }
+
+    .lead {
+        font-size: 1.5rem;
+        margin: 2rem 0;
+    }
+</style>

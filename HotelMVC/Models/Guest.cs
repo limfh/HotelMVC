@@ -6,24 +6,28 @@ namespace HotelMVC.Models
     {
         public int Id { get; set; }
 
-        [Display(Name = "ФИО")]
         [Required(ErrorMessage = "Поле 'ФИО' обязательно для заполнения")]
+        [Display(Name = "ФИО")]
         public string FullName { get; set; }
 
-        [Display(Name = "Email")]
+        [Required(ErrorMessage = "Поле 'Email' обязательно для заполнения")]
         [EmailAddress(ErrorMessage = "Некорректный email адрес")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Телефон")]
+        [Required(ErrorMessage = "Поле 'Телефон' обязательно для заполнения")]
         [Phone(ErrorMessage = "Некорректный номер телефона")]
+        [Display(Name = "Телефон")]
         public string Phone { get; set; }
 
-        [Display(Name = "Паспортные данные")]
         [Required(ErrorMessage = "Поле 'Паспортные данные' обязательно для заполнения")]
+        [Display(Name = "Паспортные данные")]
         public string PassportData { get; set; }
 
         [Display(Name = "Дата регистрации")]
-        [DataType(DataType.Date)]
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
+
+        // Навигационное свойство для связи с бронированиями
+        public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
